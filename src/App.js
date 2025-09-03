@@ -1,25 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./index.css";
 
-function App() {
+export default function App() {
+  const [text, setText] = useState("");
+  const [listItems, setListItems] = useState([]);
+
+  function handleSubmit(newItem) {
+    setListItems((items) => [...items, newItem]);
+    setText("");
+  }
+
+  function onDelete(itemToRemove) {
+    const newListItems = listItems.filter((li) => li !== itemToRemove);
+    setListItems(newListItems);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div>
+      <h1>Shopping List</h1>
+      <div className="shopping-list">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(text);
+          }}
         >
-          Learn React
-        </a>
-      </header>
+          <h2>Item To Add</h2>
+          <input
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <button>Add</button>
+        </form>
+        <ul>
+          <List text={text} list={listItems} onDelete={onDelete} />
+        </ul>
+      </div>
     </div>
   );
 }
 
-export default App;
+function List({ text, list, onDelete }) {
+  return list.map((li, i) => (
+    <li value={i}>
+      {li}
+      <button onClick={() => onDelete(li)} className="delete">
+        X
+      </button>
+    </li>
+  ));
+}
